@@ -10,15 +10,18 @@ EXPOSE 80
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["Catalog/Catalog.Api/Catalog.Api.csproj", "Catalog/Catalog.Api/"]
-RUN dotnet restore "./Catalog/Catalog.Api/./Catalog.Api.csproj"
+COPY ["Services/Catalog/Catalog.Api/Catalog.Api.csproj", "Services/Catalog/Catalog.Api/"]
+COPY ["Services/Catalog/Catalog.Api/Catalog.Application.csproj", "Services/Catalog/Catalog.Application/"]
+COPY ["Services/Catalog/Catalog.Api/Catalog.Core.csproj", "Services/Catalog/Catalog.Core/"]
+COPY ["Services/Catalog/Catalog.Api/Catalog.Infrastructure.csproj", "Services/Catalog/Catalog.Infrastructure/"]
+
+RUN dotnet restore "Services/Catalog/Catalog.Api/./Catalog.Api.csproj"
 COPY . .
-WORKDIR "/src/Catalog/Catalog.Api"
-RUN dotnet build "./Catalog.Api.csproj" -c %BUILD_CONFIGURATION% -o /app/build
+WORKDIR "/src/Services/Catalog/Catalog.Api"
+RUN dotnet build "./Catalog.Api.csproj" -c Release -o /app/build
 
 FROM build AS publish
-ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "./Catalog.Api.csproj" -c %BUILD_CONFIGURATION% -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "./Catalog.Api.csproj" -c Release -o /app/publish 
 
 FROM base AS final
 WORKDIR /app
