@@ -10,4 +10,12 @@
     <ProjectReference Include="..\Discount.Core\Discount.Core.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Commands\" />
+    <Folder Include="Mapper\" />
+    <Folder Include="Handlers\" />
+    <Folder Include="Protos\" />
+    <Folder Include="Queries\" />
+  </ItemGroup>
+
 </Project>
