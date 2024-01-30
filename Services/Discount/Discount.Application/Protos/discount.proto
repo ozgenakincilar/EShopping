@@ -29,7 +29,7 @@ message UpdateDiscountRequest{
 }
 
 message DeleteDiscountRequest{
-	bool productName=1;
+	string productName=1;
 }
 message DeleteDiscountResponse{
 	bool success=1;
