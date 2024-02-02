@@ -1,37 +1,38 @@
-﻿using Discount.Api.Services;
+﻿using System.Reflection;
+using Discount.Api.Services;
 using Discount.Application.Handlers;
 using Discount.Core.Repositories;
+using Discount.Infrastructure.Repositories;
 using MediatR;
-using System.Reflection;
 
-namespace Discount.Api
+namespace Discount.Api;
+
+public class Startup
 {
-    public class Startup
+    public void ConfigureServices(IServiceCollection services)
     {
-        public void ConfigureServices(IServiceCollection services)
+        services.AddMediatR(typeof(CreateDiscountCommandHandler).GetTypeInfo().Assembly);
+        services.AddScoped<IDiscountRepository, DiscountRepository>();
+        services.AddAutoMapper(typeof(Startup));
+        services.AddGrpc();
+    }
+
+    public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+    {
+        if (env.IsDevelopment())
         {
-            services.AddMediatR(typeof(CreateDiscountCommandHandler).GetTypeInfo().Assembly);
-            services.AddScoped<IDiscountRepository, IDiscountRepository>();
-            services.AddAutoMapper(typeof(Startup));
-            services.AddGrpc();
+            app.UseDeveloperExceptionPage();
         }
 
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        app.UseRouting();
+        app.UseEndpoints(endpoints =>
         {
-            if (env.IsDevelopment())
+            endpoints.MapGrpcService<DiscountService>();
+            endpoints.MapGet("/", async context =>
             {
-                app.UseDeveloperExceptionPage();
-            }
-
-            app.UseRouting();
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapGrpcService<DiscountService>();
-                endpoints.MapGet("/", async context =>
-                {
-                    await context.Response.WriteAsync("Communication with gRRPC endpoints must be made through a gRPC client");
-                });
+                await context.Response.WriteAsync(
+                    "Communication with gRPC endpoints must be made through a gRPC client.");
             });
-        }
+        });
     }
 }

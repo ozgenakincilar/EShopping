@@ -1,5 +1,4 @@
-﻿using Catalog.Application.Commands;
-using Discount.Application.Commands;
+﻿using Discount.Application.Commands;
 using Discount.Application.Queries;
 using Discount.Grpc.Protos;
 using Grpc.Core;
